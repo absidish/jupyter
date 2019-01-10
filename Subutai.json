@@ -49,6 +49,13 @@
             "default": "wp",
             "validation": "[a-zA-Z0-9]+"
         },
+        "account": {
+            "description": "Enter the account name",
+            "type": "string",
+            "default": "wp",
+            "validation": "[a-zA-Z0-9]+"
+        },
+        
         "domainName": {
             "description": "Enter the application domain name",
             "type": "domain",
