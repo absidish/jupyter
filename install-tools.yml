@@ -1,9 +1,12 @@
----
-- hosts: all  
-  tasks: 
-   - name: apt-get update
-      apt:
-      update_cache: yes
+--- 
+
+- hosts: all
+  remote_user: root
+  tasks:
+   - name: Upgrade debian   
+     apt:
+        update_cache: true
+        upgrade: true
       
    - name: Install a list of packages
      apt:
@@ -12,32 +15,49 @@
       packages:
         - jupyter-notebook
         - python-pip   
+
         
-  - name: force upgrade pip
+   - name: force upgrade pip
      pip: 
       name: pip
       state: latest
         
-  - name: Installing NumPy python library using Ansible pip module
+   - name: Installing ipykernel python library
      pip:
       name: ipykernel
-      
-  - name: copy jupyter conf
+   
+   - name: gen config
+     shell: mkdir -p /root/.jupyter
+   
+   - name: copy genpws
      copy:
+      src: genpwd.py
+      dest: /tmp/genpwd.py
+      mode: 0644
+
+   - name: print to stdout
+     command: python3 /tmp/genpwd.py "{{subutai.user_variables.password}}"
+     register: output
+
+   - name: print hello
+     shell: echo {{output.stdout_lines[0]}} >> /tmp/out.txt
+     
+
+   - name: copy copy jupyter conf
+     template:
       src: jupyter_notebook_config.py
       dest: /root/.jupyter/jupyter_notebook_config.py
-      mode: 0644
+      owner: root
+      mode: "u=rw,g=r,o=r"
       
-  - name: copy jupyter conf
+   - name: copy jupyter conf
      copy:
       src: jupyter-notebook.service
       dest: /lib/systemd/system/jupyter-notebook.service
       mode: 0644
       
-  - name: restart service cron on centos, in all cases, also issue daemon-reload to pick up config changes
+   - name: restart jupyter service
      systemd:
-     state: restarted
+      state: restarted
       daemon_reload: yes
-      name: upyter-notebook.service
-      
-      
+      name: jupyter-notebook.service
