@@ -37,11 +37,7 @@
 
    - name: print to stdout
      command: python3 /tmp/genpwd.py "{{subutai.user_variables.password}}"
-     register: output
-
-   - name: print hello
-     shell: echo {{output.stdout_lines[0]}} >> /tmp/out.txt
-     
+     register: output     
 
    - name: copy copy jupyter conf
      template:
