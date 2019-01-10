@@ -1,1 +1,43 @@
-
+---
+- hosts: all  
+  tasks: 
+   - name: apt-get update
+      apt:
+      update_cache: yes
+      
+   - name: Install a list of packages
+     apt:
+      name: "{{ packages }}"
+     vars:
+      packages:
+        - jupyter-notebook
+        - python-pip   
+        
+  - name: force upgrade pip
+     pip: 
+      name: pip
+      state: latest
+        
+  - name: Installing NumPy python library using Ansible pip module
+     pip:
+      name: ipykernel
+      
+  - name: copy jupyter conf
+     copy:
+      src: jupyter_notebook_config.py
+      dest: /root/.jupyter/jupyter_notebook_config.py
+      mode: 0644
+      
+  - name: copy jupyter conf
+     copy:
+      src: jupyter-notebook.service
+      dest: /lib/systemd/system/jupyter-notebook.service
+      mode: 0644
+      
+  - name: restart service cron on centos, in all cases, also issue daemon-reload to pick up config changes
+     systemd:
+     state: restarted
+      daemon_reload: yes
+      name: upyter-notebook.service
+      
+      
