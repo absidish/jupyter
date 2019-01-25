@@ -57,3 +57,9 @@
       state: restarted
       daemon_reload: yes
       name: jupyter-notebook.service
+      
+   - name: enable jupyter service and ensure it is not masked
+     systemd:
+      name: jupyter-notebook.service
+      enabled: yes
+      masked: no
